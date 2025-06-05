@@ -1,3 +1,4 @@
+
 import streamlit as st
 import openai
 import matplotlib.pyplot as plt
@@ -71,7 +72,7 @@ if st.button("▶️ 評価する") and api_key and txt_file:
 
     # スコア抽出とレーダーチャート描画
     try:
-        score_pattern = re.compile(r"(胆力|好奇心|論理性|協調性)[：:](\d{1,2})点")
+        score_pattern = re.compile(r"(胆力|好奇心|論理性|協調性)[：:]\s*(\d{1,2})点")
         scores = {}
 
         for match in score_pattern.finditer(result_text):
