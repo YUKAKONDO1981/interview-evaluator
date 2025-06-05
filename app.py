@@ -65,11 +65,15 @@ if st.button("▶️ 評価する") and api_key and txt_file:
     st.markdown("### 📋 評価結果")
     st.text(result_text)
 
+    # デバッグ表示（出力確認用）
+    st.markdown("### 🛠 ChatGPTの出力プレビュー")
+    st.code(result_text)
+
     # スコア抽出とレーダーチャート描画
     try:
         scores = {}
         for line in result_text.splitlines():
-            match = re.match(r"(.*)：(\d+)点", line)
+            match = re.match(r"([^：:：]+)[：:：](\d+)点", line)
             if match:
                 category = match.group(1).strip()
                 score = int(match.group(2))
