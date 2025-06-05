@@ -3,6 +3,7 @@ import openai
 import matplotlib.pyplot as plt
 import numpy as np
 import tempfile
+import re
 
 # -------------------- UI --------------------
 st.set_page_config(page_title="面接評価AIアプリ", layout="centered")
@@ -17,7 +18,8 @@ txt_file = st.file_uploader("📝 面接文字起こし（.txt）ファイルを
 
 # 評価ボタン
 if st.button("▶️ 評価する") and api_key and txt_file:
-    openai.api_key = api_key
+    # OpenAIクライアント初期化
+    client = openai.OpenAI(api_key=api_key)
 
     # アップロードされたテキストを読み込む
     content = txt_file.read().decode("utf-8")
@@ -43,16 +45,16 @@ if st.button("▶️ 評価する") and api_key and txt_file:
 {content}
 """
 
-    # ChatGPT API呼び出し
+    # ChatGPT API呼び出し（v1対応）
     with st.spinner("ChatGPTが評価中です..."):
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "user", "content": prompt}
             ]
         )
 
-    result_text = response["choices"][0]["message"]["content"]
+    result_text = response.choices[0].message.content
     st.success("✅ 評価が完了しました！")
 
     # 結果の表示
@@ -61,7 +63,6 @@ if st.button("▶️ 評価する") and api_key and txt_file:
 
     # スコア抽出とレーダーチャート描画
     try:
-        import re
         scores = {}
         for line in result_text.splitlines():
             match = re.match(r"(.*)：(\d+)点", line)
