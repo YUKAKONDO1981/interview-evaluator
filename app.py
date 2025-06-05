@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tempfile
 import re
+import matplotlib
+
+# フォント設定（Streamlit Cloud対応）
+plt.rcParams['font.family'] = 'IPAexGothic'
 
 # -------------------- UI --------------------
 st.set_page_config(page_title="面接評価AIアプリ", layout="centered")
@@ -73,8 +77,8 @@ if st.button("▶️ 評価する") and api_key and txt_file:
 
         if scores:
             st.markdown("### 📈 レーダーチャート")
-            labels = list(scores.keys())
-            values = list(scores.values())
+            labels = ["胆力", "好奇心", "論理性", "協調性"]
+            values = [scores.get(label, 0) for label in labels]
             values += values[:1]
             angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
             angles += angles[:1]
@@ -82,9 +86,10 @@ if st.button("▶️ 評価する") and api_key and txt_file:
             fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
             ax.plot(angles, values, 'o-', linewidth=2, color='orange')
             ax.fill(angles, values, alpha=0.25, color='orange')
-            ax.set_thetagrids(np.degrees(angles[:-1]), labels)
+            ax.set_thetagrids(np.degrees(angles[:-1]), labels, fontproperties=matplotlib.font_manager.FontProperties(fname='/usr/share/fonts/truetype/fonts-japanese-gothic.ttf'))
             ax.set_ylim(0, 10)
             ax.set_title("面接評価レーダーチャート", size=16)
+
             st.pyplot(fig)
     except Exception as e:
         st.error("⚠️ グラフの生成に失敗しました。出力形式をご確認ください。")
