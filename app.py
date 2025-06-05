@@ -71,13 +71,13 @@ if st.button("▶️ 評価する") and api_key and txt_file:
 
     # スコア抽出とレーダーチャート描画
     try:
+        score_pattern = re.compile(r"(胆力|好奇心|論理性|協調性)[：:](\d{1,2})点")
         scores = {}
-        for line in result_text.splitlines():
-            match = re.match(r"([^：:：]+)[：:：](\d+)点", line)
-            if match:
-                category = match.group(1).strip()
-                score = int(match.group(2))
-                scores[category] = score
+
+        for match in score_pattern.finditer(result_text):
+            category = match.group(1).strip()
+            score = int(match.group(2))
+            scores[category] = score
 
         if scores:
             st.markdown("### 📈 レーダーチャート")
